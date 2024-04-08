@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PackagesController;
@@ -30,22 +31,21 @@ Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome');
 
 Auth::routes(['verify' => true]);
 
+Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+
 Route::middleware('auth')->group(function () {
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::prefix('user')->group(function(){
+Route::middleware('auth')->prefix('user')->group(function(){
     Route::get('/',[UserController::class, 'userDashboard'])->name('user.dashboard');
     Route::get('/investment-page', [InvestmentController::class, 'investPage'])->name('investment.page');
-    Route::get('/wallet', [WalletController::class, 'wallet'])->name('wallet');
-
 
 });
 
-Route::prefix('admin')->group(function(){
+Route::middleware('auth')->prefix('admin')->group(function(){
 
     Route::get('/admin-panel',[AdminController::class, 'adminPanel'])->name('admin.panel');
     Route::get('/upload-investment-package',[PackageController::class, 'UploadPackage'])->name('upload.investment.package');
@@ -56,7 +56,7 @@ Route::prefix('admin')->group(function(){
 
 require __DIR__.'/auth.php';
 
-Auth::routes();
+
 
 
 
